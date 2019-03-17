@@ -6,7 +6,29 @@ Scene::Scene(const char* path)
 }
 
 void Scene::render(const char* path) {
+	const int width = this->camera.getWidth() * this->camera.getFocalLength();
+	const int height = this->camera.getHeight() * this->camera.getFocalLength();
+	cimg_library::CImg<float> image(width, height, 1, 3, 0);
 
+	for (int i = 0; i < width; i++) {
+		for (int j = 0; j < height; j++) {
+			float x = ((i < width / 2)?-1:1)*this->camera.getAspectRatio() * glm::tan(glm::radians(this->camera.getFov()) / 2); 
+			float y = ((j < height / 2)?-1:1)*glm::tan(glm::radians(this->camera.getFov()) / 2); 
+			float z = -this->camera.getFocalLength();
+
+			glm::vec3 rayDirection = glm::normalize(glm::vec3(x, y, z) - this->camera.getPosition());
+			Ray ray(this->camera.getPosition(), rayDirection);
+			Color pixelColor = trace(ray, -this->camera.getFocalLength());
+			image(i, j, 0) = pixelColor.addColors().r * 255.0f;
+			image(i, j, 1) = pixelColor.addColors().g * 255.0f;
+			image(i, j, 2) = pixelColor.addColors().b * 255.0f;
+		}
+	}
+	//image.save(path);
+	cimg_library::CImgDisplay main_disp(image, "Render");
+	while (!main_disp.is_closed()) {
+		main_disp.wait();
+	}
 }
 
 Color Scene::trace(Ray& ray, int depth) {
@@ -20,6 +42,7 @@ Color Scene::trace(Ray& ray, int depth) {
 			//		calculate illumination
 			//	else
 			//		set to zero/ambient
+			return this->objects[i]->getMaterial().getColor();
 		}
 	}
 	//

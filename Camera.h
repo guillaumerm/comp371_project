@@ -9,7 +9,7 @@
 #include "./glm/gtc/matrix_transform.hpp"
 #include "./glm/gtc/type_ptr.hpp"
 
-class Camera: virtual Object {
+class Camera: public Object {
 public:
 	Camera();
 	Camera(glm::vec3 position, float fov, float focalLength, float aspectRatio);
@@ -20,6 +20,8 @@ public:
 	void setFocalLength(float focalLength);
 	void setAspectRatio(float aspectRatio);
 	void parse(std::istream& input);
+	float getWidth();
+	float getHeight();
 private:
 	const static float DEFAULT_FOV;
 	const static float DEFAULT_FOCAL_LENGTH;

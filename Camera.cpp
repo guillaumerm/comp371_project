@@ -64,3 +64,13 @@ void Camera::parse(std::istream& input) {
 	std::string stringAspectRatio = trim(line.substr(line.find(colon) + 1, line.length()));
 	this->setAspectRatio(std::stof(stringAspectRatio));
 }
+
+float Camera::getWidth()
+{
+	return 2 * this->aspectRatio* glm::tan(glm::radians(this->fov) / 2);
+}
+
+float Camera::getHeight()
+{
+	return 2 * tan(glm::radians(this->fov) / 2);
+}

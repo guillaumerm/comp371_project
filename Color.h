@@ -14,6 +14,7 @@ public:
 	void setAmbientColor(glm::vec3 ambientColor);
 	void setDiffuseColor(glm::vec3 diffuseColor);
 	void setSpecularColor(glm::vec3 specularColor);
+	glm::vec3 addColors();
 private:
 	glm::vec3 ambientColor;
 	glm::vec3 diffuseColor;

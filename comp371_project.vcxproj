@@ -124,6 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CImg.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Material.h" />

@@ -29,5 +29,6 @@ private:
 	Camera camera;
 	bool parseFile(const char* path);
 	Color trace(Ray& ray, int depth);
+	bool shadowTrace(Ray& shadowRay);
 };
 #endif

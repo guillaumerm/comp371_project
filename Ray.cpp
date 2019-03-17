@@ -13,3 +13,18 @@ glm::vec3 Ray::getOrigin()
 {
 	return this->origin;
 }
+
+float Ray::x(float t)
+{
+	return this->origin.x + this->direction.x * t;
+}
+
+float Ray::y(float t)
+{
+	return this->origin.y + this->direction.y * t;
+}
+
+float Ray::z(float t)
+{
+	return this->origin.z + this->direction.z * t;
+}

@@ -31,18 +31,42 @@ void Scene::render(const char* path) {
 	}
 }
 
+bool Scene::shadowTrace(Ray& shadowRay) {
+	float t = INFINITY;
+	for (int i = 0; i < this->objects.size(); i++) {
+		if (this->objects[i]->intersect(shadowRay, t)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 Color Scene::trace(Ray& ray, int depth) {
 	Color color;
 	// TODO
 	float t = INFINITY;
 	for (int i = 0; i < this->objects.size(); i++) {
 		if (this->objects[i]->intersect(ray, t)) {
+			for (int k = 0; k < this->lights.size(); k++) {
+
+				// Construct the shadowRay from point of intersection
+				Ray shadowRay(glm::vec3(ray.x(t), ray.y(t), ray.z(t)), this->lights[k].getPosition());
+
+				// Cast shadowRay
+				if (shadowTrace(shadowRay)) {
+					color.setAmbientColor(glm::vec3(0,0,0));
+					return color;
+				}
+				else {
+					return this->objects[i]->getMaterial().getColor();
+				}
+			}
 			// Cast Shadow ray
 			//  if(not in shadow)
 			//		calculate illumination
 			//	else
 			//		set to zero/ambient
-			return this->objects[i]->getMaterial().getColor();
+			
 		}
 	}
 	//

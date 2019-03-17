@@ -9,6 +9,9 @@ public:
 	Ray(glm::vec3 origin, glm::vec3 direction);
 	glm::vec3 getDirection();
 	glm::vec3 getOrigin();
+	float x(float t);
+	float y(float t);
+	float z(float t);
 private:
 	glm::vec3 origin;
 	glm::vec3 direction;

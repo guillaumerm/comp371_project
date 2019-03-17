@@ -34,9 +34,9 @@ void Color::setAmbientColor(glm::vec3 ambientColor) {
 }
 
 void Color::setDiffuseColor(glm::vec3 ambientColor) {
-	this->ambientColor = ambientColor;
+	this->diffuseColor = ambientColor;
 }
 
 void Color::setSpecularColor(glm::vec3 ambientColor) {
-	this->ambientColor = ambientColor;
+	this->specularColor = ambientColor;
 }

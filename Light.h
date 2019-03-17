@@ -1,5 +1,8 @@
 #ifndef LIGHT_H
 #define LIGHT_H
+#include <string>
+#include <sstream>
+#include "Utils.h"
 #include "Object.h"
 #include "Color.h"
 #include "./glm/glm.hpp"

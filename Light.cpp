@@ -19,5 +19,27 @@ Color Light::getColor() {
 }
 
 void Light::parse(std::istream& input) {
-	// TODO
+	std::string line;
+	char colon = ':';
+
+	std::istringstream lineStream;
+
+	// Parse the position
+	std::getline(input, line);
+	std::string stringPosition = trim(line.substr(line.find(colon) + 1, line.length()));
+	this->setPosition(readVec3(std::istringstream(stringPosition)));
+
+	Color color;
+
+	// Parse diffuse color
+	std::getline(input, line);
+	std::string stringDiffuseColor = trim(line.substr(line.find(colon) + 1, line.length()));
+	color.setDiffuseColor(readVec3(std::istringstream(stringDiffuseColor)));
+
+	// Parse specular color
+	std::getline(input, line);
+	std::string stringSpecularColor = trim(line.substr(line.find(colon) + 1, line.length()));
+	color.setSpecularColor(readVec3(std::istringstream(stringSpecularColor)));
+
+	this->setColor(color);
 }

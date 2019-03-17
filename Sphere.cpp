@@ -1,9 +1,12 @@
 #include "Sphere.h"
 
-Sphere::Sphere(glm::vec3 position, float radius, Material material) {
-	this->position = position;
+const float Sphere::DEFAULT_RADIUS = 0.0f;
+
+Sphere::Sphere():Sphere(Sphere::DEFAULT_POSITION, Sphere::DEFAULT_RADIUS, Sphere::DEFAULT_MATERIAL) {
+}
+
+Sphere::Sphere(glm::vec3 position, float radius, Material material):PhysicalObject(position, material) {
 	this->radius = radius;
-	this->material = material;
 }
 
 bool Sphere::intersect(Ray& ray, float& t) {
@@ -21,7 +24,12 @@ bool Sphere::intersect(Ray& ray, float& t) {
 
 	t = glm::min(t_0, t_1);
 	return true;
-};
+}
+
+void Sphere::parse(std::istream& input)
+{
+}
+
 
 float Sphere::computeA(Ray& ray) {
 	return glm::pow(ray.getDirection().x, 2) + glm::pow(ray.getDirection().y, 2) + glm::pow(ray.getDirection().z, 2);

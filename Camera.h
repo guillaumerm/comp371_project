@@ -28,15 +28,4 @@ private:
 	float focalLength;
 	float aspectRatio;
 };
-
-std::string trim(std::string str)
-{
-	// remove trailing white space
-	while (!str.empty() && std::isspace(str.back())) str.pop_back();
-
-	// return residue after leading white space
-	std::size_t pos = 0;
-	while (pos < str.size() && std::isspace(str[pos])) ++pos;
-	return str.substr(pos);
-}
 #endif

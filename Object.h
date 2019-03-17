@@ -11,7 +11,7 @@ class Object {
 public:
 	Object();
 	Object(glm::vec3 position);
-	virtual void parse(std::istream& input);
+	virtual void parse(std::istream& input) = 0;
 	virtual void setPosition(glm::vec3 position);
 	virtual glm::vec3 getPosition();
 private:

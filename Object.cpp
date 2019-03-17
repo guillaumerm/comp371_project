@@ -1,6 +1,6 @@
 #include "Object.h"
 
-const glm::vec3 DEFAULT_POSITION = glm::vec3(0, 0, 0);
+const glm::vec3 Object::DEFAULT_POSITION = glm::vec3(0, 0, 0);
 
 Object::Object():Object(Object::DEFAULT_POSITION) {
 	// Left Empty

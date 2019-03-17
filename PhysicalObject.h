@@ -4,12 +4,16 @@
 #include "Material.h"
 #include "Ray.h"
 
-class PhysicalObject: virtual Object {
+class PhysicalObject: public Object {
 public:
-	PhysicalObject(Material material);
-	virtual Material getMaterial();
-	virtual bool intersect(Ray& ray, float& t);
+	PhysicalObject();
+	PhysicalObject(glm::vec3 psotion, Material material);
+	Material getMaterial();
+	void setMaterial(Material material);
+	virtual bool intersect(Ray& ray, float& t) = 0;
 private:
 	Material material;
+protected:
+	const static Material DEFAULT_MATERIAL;
 };
 #endif

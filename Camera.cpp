@@ -46,21 +46,21 @@ void Camera::parse(std::istream& input) {
 	
 	// Parse the postion
 	std::getline(input, line);
-	std::string stringPosition = trim(line.substr(line.find(colon), line.length()));
-	this->setPosition(readVec3<float>(std::istringstream(stringPosition)));
+	std::string stringPosition = trim(line.substr(line.find(colon) + 1, line.length()));
+	this->setPosition(readVec3(std::istringstream(stringPosition)));
 
 	// Parse the fov
 	std::getline(input, line);
-	std::string stringFov = trim(line.substr(line.find(colon), line.length()));
+	std::string stringFov = trim(line.substr(line.find(colon) + 1, line.length()));
 	this->setFov(std::stof(stringFov));
 
 	// Parse focal length
 	std::getline(input, line);
-	std::string stringFocalLength = trim(line.substr(line.find(colon), line.length()));
+	std::string stringFocalLength = trim(line.substr(line.find(colon) + 1, line.length()));
 	this->setFocalLength(std::stof(stringFocalLength));
 
 	// Prase aspect ratio
 	std::getline(input, line);
-	std::string stringAspectRatio = trim(line.substr(line.find(colon), line.length()));
-	this->setFocalLength(std::stof(stringAspectRatio));
+	std::string stringAspectRatio = trim(line.substr(line.find(colon) + 1, line.length()));
+	this->setAspectRatio(std::stof(stringAspectRatio));
 }

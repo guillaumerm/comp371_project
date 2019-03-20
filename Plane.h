@@ -18,6 +18,7 @@ public:
 	void setNormal(glm::vec3 normal);
 	bool intersect(Ray& ray, float& t);
 	void parse(std::istream& input);
+	glm::vec3 calculateNormal(glm::vec3 position);
 private:
 	glm::vec3 normal;
 protected:

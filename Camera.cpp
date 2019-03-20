@@ -67,10 +67,10 @@ void Camera::parse(std::istream& input) {
 
 float Camera::getWidth()
 {
-	return 2 * this->aspectRatio* glm::tan(glm::radians(this->fov) / 2);
+	return this->getAspectRatio() * this->getHeight();
 }
 
 float Camera::getHeight()
 {
-	return 2 * tan(glm::radians(this->fov) / 2);
+	return 2 * this->focalLength * tan(glm::radians(this->fov) / 2);
 }

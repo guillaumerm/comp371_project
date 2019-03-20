@@ -28,7 +28,7 @@ private:
 	std::vector<Light> lights;
 	Camera camera;
 	bool parseFile(const char* path);
-	Color trace(Ray& ray, int depth);
+	Color trace(Ray& ray);
 	bool shadowTrace(Ray& shadowRay);
 };
 #endif

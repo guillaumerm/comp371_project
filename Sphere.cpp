@@ -14,20 +14,39 @@ bool Sphere::intersect(Ray& ray, float& t) {
 	float b = this->computeB(ray);
 	float c = this->computeC(ray);
 
+	float discriminant = glm::pow(b, 2) - (4.0f * a * c);
+
 	// Abort if b^2 - 4ac is negative
-	if (glm::pow(b, 2) - 4 * a * c < 0) {
+	if (discriminant < 0) {
 		return false;
 	}
 
-	float t_0 = (-b + glm::sqrt(glm::pow(b, 2) - 4 * a * c)) / (2 * a);
-	float t_1 = (-b - glm::sqrt(glm::pow(b, 2) - 4 * a * c)) / (2 * a);
+	float t_0 = (-b - glm::sqrt(discriminant)) / (2 * a);
+	float t_1 = (-b + glm::sqrt(discriminant)) / (2 * a);
 
-	t = glm::min(t_0, t_1);
+	if (t_1<0) {
+		return false;
+	}
+//	else if (t_0 <= 0 && t_1 > 0) {
+//		t = t_1;
+//	}
+	else {
+		t = glm::min(t_0, t_1);
+	}
+
 	return true;
 }
 
+glm::vec3 Sphere::calculateNormal(glm::vec3 position) {
+	return (1 / this->radius) * glm::vec3(
+		(position.x - this->position.x),
+		(position.y - this->position.y),
+		(position.z - this->position.z)
+	);
+}
+
 float Sphere::computeA(Ray& ray) {
-	return glm::pow(ray.getDirection().x, 2) + glm::pow(ray.getDirection().y, 2) + glm::pow(ray.getDirection().z, 2);
+	return glm::dot(ray.getDirection(), ray.getDirection());
 }
 
 float Sphere::computeB(Ray& ray) {
@@ -41,7 +60,8 @@ float Sphere::computeC(Ray & ray) {
 	return
 		glm::pow(ray.getOrigin().x - this->position.x, 2) +
 		glm::pow(ray.getOrigin().y - this->position.y, 2) +
-		glm::pow(ray.getOrigin().z - this->position.z, 2);
+		glm::pow(ray.getOrigin().z - this->position.z, 2) -
+		glm::pow(this->radius, 2);
 }
 
 void Sphere::setRadius(float radius) {

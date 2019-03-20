@@ -10,14 +10,15 @@ Plane::Plane(glm::vec3 normal, glm::vec3 position, Material material): PhysicalO
 }
 
 bool Plane::intersect(Ray& ray, float& t) {
-	float temp = glm::dot(this->getPosition() - ray.getOrigin(), this->normal) / glm::dot(ray.getDirection(), this->normal);
-	if (temp >= 0) {
-		t = temp;
-		return true;
-	}
-	else {
-		return false;
-	}
+	//float temp = glm::dot(this->getPosition() - ray.getOrigin(), this->normal) / glm::dot(ray.getDirection(), this->normal);
+	//if (temp >= 0) {
+	//	t = temp;
+	//	return true;
+	//}
+	//else {
+	//	return false;
+	//}
+	return false;
 }
 
 void Plane::parse(std::istream& input)
@@ -63,6 +64,11 @@ void Plane::parse(std::istream& input)
 	material.setShininess(std::stof(stringShininess));
 
 	this->setMaterial(material);
+}
+
+glm::vec3 Plane::calculateNormal(glm::vec3 position)
+{
+	return this->normal;
 }
 
 glm::vec3 Plane::getNormal() {

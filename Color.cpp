@@ -45,3 +45,8 @@ glm::vec3 Color::addColors()
 {
 	return this->ambientColor + this->diffuseColor + this->specularColor;
 }
+
+const Color operator*(Color color, float value)
+{
+	return Color(value * color.getAmbientColor(), value * color.getDiffuseColor(), value * color.getSpecularColor());
+}

@@ -6,19 +6,23 @@ Scene::Scene(const char* path)
 }
 
 void Scene::render(const char* path) {
-	const int width = this->camera.getWidth() * this->camera.getFocalLength();
-	const int height = this->camera.getHeight() * this->camera.getFocalLength();
+	const int width = glm::round(this->camera.getWidth());
+	const int height = glm::round(this->camera.getHeight());
+	std::printf("Width:%d Height:%d", width, height);
+	float angle = glm::tan(glm::radians(this->camera.getFov() / 2));
+
 	cimg_library::CImg<float> image(width, height, 1, 3, 0);
 
-	for (int i = 0; i < width; i++) {
-		for (int j = 0; j < height; j++) {
-			float x = ((i < width / 2)?-1:1)*this->camera.getAspectRatio() * glm::tan(glm::radians(this->camera.getFov()) / 2); 
-			float y = ((j < height / 2)?-1:1)*glm::tan(glm::radians(this->camera.getFov()) / 2); 
+
+	for (int j = 0; j < height; ++j) {
+		for (int i = 0; i < width; ++i) {
+			float x = (2 * ((i + 0.5) / (float)width - 1)) * this->camera.getAspectRatio() * angle;
+			float y = (1 - 2 * ((j + 0.5) / (float)height)) * angle;
 			float z = -this->camera.getFocalLength();
 
 			glm::vec3 rayDirection = glm::normalize(glm::vec3(x, y, z) - this->camera.getPosition());
 			Ray ray(this->camera.getPosition(), rayDirection);
-			Color pixelColor = trace(ray, -this->camera.getFocalLength());
+			Color pixelColor = trace(ray);
 			image(i, j, 0) = pixelColor.addColors().r * 255.0f;
 			image(i, j, 1) = pixelColor.addColors().g * 255.0f;
 			image(i, j, 2) = pixelColor.addColors().b * 255.0f;
@@ -41,36 +45,28 @@ bool Scene::shadowTrace(Ray& shadowRay) {
 	return false;
 }
 
-Color Scene::trace(Ray& ray, int depth) {
+Color Scene::trace(Ray& ray) {
 	Color color;
 	// TODO
-	float t = INFINITY;
+	float nearest_t = INFINITY;
+	int indexClosestObject = -1;
 	for (int i = 0; i < this->objects.size(); i++) {
+		float t = INFINITY;
 		if (this->objects[i]->intersect(ray, t)) {
-			for (int k = 0; k < this->lights.size(); k++) {
-
-				// Construct the shadowRay from point of intersection
-				Ray shadowRay(glm::vec3(ray.x(t), ray.y(t), ray.z(t)), this->lights[k].getPosition());
-
-				// Cast shadowRay
-				if (shadowTrace(shadowRay)) {
-					color.setAmbientColor(glm::vec3(0,0,0));
-					return color;
-				}
-				else {
-					return this->objects[i]->getMaterial().getColor();
-				}
+			if (t < nearest_t) {
+				nearest_t = t;
+				indexClosestObject = i;
 			}
-			// Cast Shadow ray
-			//  if(not in shadow)
-			//		calculate illumination
-			//	else
-			//		set to zero/ambient
-			
 		}
 	}
+
+	bool isInShadow = true;
+	if (indexClosestObject != -1) {
+		// Computer shadow ray
+		isInShadow = false;
+	}
 	//
-	return color;
+	return (!isInShadow)?this->objects[indexClosestObject]->getMaterial().getColor() : Color();
 }
 
 bool Scene::parseFile(const char* path) {

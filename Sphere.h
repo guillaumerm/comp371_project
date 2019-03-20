@@ -18,13 +18,13 @@ public:
 	void parse(std::istream& input);
 	float getRadius();
 	void setRadius(float radius);
+	glm::vec3 calculateNormal(glm::vec3 position);
 private:
 	glm::vec3 position;
 	float radius;
 	float computeB(Ray& ray);
 	float computeC(Ray& ray);
 	float computeA(Ray& ray);
-	float computeRoot(Ray& ray);
 protected:
 	const static float DEFAULT_RADIUS;
 };

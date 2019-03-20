@@ -11,6 +11,7 @@ public:
 	Material getMaterial();
 	void setMaterial(Material material);
 	virtual bool intersect(Ray& ray, float& t) = 0;
+	virtual glm::vec3 calculateNormal(glm::vec3 position) = 0;
 private:
 	Material material;
 protected:

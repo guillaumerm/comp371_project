@@ -20,3 +20,8 @@ bool Mesh::intersect(Ray& ray, float& t)
 void Mesh::parse(std::istream& input)
 {
 }
+
+glm::vec3 Mesh::calculateNormal(glm::vec3 position)
+{
+	return glm::vec3();
+}

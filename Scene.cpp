@@ -16,7 +16,7 @@ void Scene::render(const char* path) {
 
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
-			float x = (2 * ((i + 0.5) / (float)width - 1)) * this->camera.getAspectRatio() * angle;
+			float x = (2 * ((i + 0.5) / (float)width) - 1) * this->camera.getAspectRatio() * angle;
 			float y = (1 - 2 * ((j + 0.5) / (float)height)) * angle;
 			//float z = -this->camera.getFocalLength();
 			float z = -1;

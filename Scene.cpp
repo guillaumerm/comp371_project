@@ -20,7 +20,8 @@ void Scene::render(const char* path) {
 			float y = (1 - 2 * ((j + 0.5) / (float)height)) * angle;
 			float z = -this->camera.getFocalLength();
 
-			glm::vec3 rayDirection = glm::normalize(glm::vec3(x, y, z) - this->camera.getPosition());
+			// Should I substract the center of projection that is the position of the camera
+			glm::vec3 rayDirection = glm::normalize(glm::vec3(x, y, z));
 			Ray ray(this->camera.getPosition(), rayDirection);
 			Color pixelColor = trace(ray);
 			image(i, j, 0) = pixelColor.addColors().r * 255.0f;

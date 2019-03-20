@@ -18,8 +18,8 @@ void Scene::render(const char* path) {
 		for (int i = 0; i < width; ++i) {
 			float x = (2 * ((i + 0.5) / (float)width - 1)) * this->camera.getAspectRatio() * angle;
 			float y = (1 - 2 * ((j + 0.5) / (float)height)) * angle;
-			float z = -this->camera.getFocalLength();
-
+			//float z = -this->camera.getFocalLength();
+			float z = -1;
 			// Should I substract the center of projection that is the position of the camera
 			glm::vec3 rayDirection = glm::normalize(glm::vec3(x, y, z));
 			Ray ray(this->camera.getPosition(), rayDirection);

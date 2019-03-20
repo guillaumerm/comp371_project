@@ -27,9 +27,6 @@ bool Sphere::intersect(Ray& ray, float& t) {
 	if (t_1<0) {
 		return false;
 	}
-//	else if (t_0 <= 0 && t_1 > 0) {
-//		t = t_1;
-//	}
 	else {
 		t = glm::min(t_0, t_1);
 	}
@@ -51,17 +48,11 @@ float Sphere::computeA(Ray& ray) {
 
 float Sphere::computeB(Ray& ray) {
 	return
-		2 * (ray.getDirection().x * (ray.getOrigin().x - this->position.x) +
-			ray.getDirection().y * (ray.getOrigin().y - this->position.y) +
-			ray.getDirection().z * (ray.getOrigin().z - this->position.z));
+		2 * glm::dot(ray.getDirection(), ray.getOrigin() - this->getPosition());
 }
 
 float Sphere::computeC(Ray & ray) {
-	return
-		glm::pow(ray.getOrigin().x - this->position.x, 2) +
-		glm::pow(ray.getOrigin().y - this->position.y, 2) +
-		glm::pow(ray.getOrigin().z - this->position.z, 2) -
-		glm::pow(this->radius, 2);
+	return glm::dot(ray.getOrigin() - this->getPosition(), ray.getOrigin() - this->getPosition()) - glm::pow(this->radius, 2);
 }
 
 void Sphere::setRadius(float radius) {

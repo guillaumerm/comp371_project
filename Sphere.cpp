@@ -35,11 +35,7 @@ bool Sphere::intersect(Ray& ray, float& t) {
 }
 
 glm::vec3 Sphere::calculateNormal(glm::vec3 position) {
-	return (1 / this->radius) * glm::vec3(
-		(position.x - this->position.x),
-		(position.y - this->position.y),
-		(position.z - this->position.z)
-	);
+	return (1 / this->radius) * position - this->position;
 }
 
 float Sphere::computeA(Ray& ray) {

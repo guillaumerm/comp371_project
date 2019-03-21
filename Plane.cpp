@@ -12,13 +12,13 @@ Plane::Plane(glm::vec3 normal, glm::vec3 position, Material material): PhysicalO
 bool Plane::intersect(Ray& ray, float& t) {
 	float denominator = glm::dot(this->normal, ray.getDirection());
 	
-	// If denominator is 0 there is no intersection has the ray are parallel to the plane
+	// If denominator is 0 there is no intersection as the ray is parallel to the plane
 	if (denominator == 0) {
 		return false;
 	}
 
-	float numerator = -(glm::dot(this->normal, ray.getOrigin()) + glm::distance(this->getPosition(), ray.getOrigin()));
-	float tmp = denominator / numerator;
+	float numerator = -(glm::dot(this->normal, this->getPosition()) + glm::sqrt(glm::dot(ray.getDirection(), ray.getDirection())));
+	float tmp = numerator / denominator;
 
 	// If t <= 0, the intersection is behind the ray's origin
 	if (tmp <= 0) {

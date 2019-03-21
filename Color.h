@@ -15,7 +15,10 @@ public:
 	void setDiffuseColor(glm::vec3 diffuseColor);
 	void setSpecularColor(glm::vec3 specularColor);
 	glm::vec3 addColors();
-	friend const Color operator*(Color color, float value);
+	friend const Color operator*(Color &color, float value);
+	friend const Color operator+(Color &color1, Color &color2);
+	//friend const Color operator+=(Color &color1, Color &color2);
+	friend const Color operator*(Color color1, Color color2);
 private:
 	glm::vec3 ambientColor;
 	glm::vec3 diffuseColor;

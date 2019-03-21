@@ -33,12 +33,12 @@ void Color::setAmbientColor(glm::vec3 ambientColor) {
 	this->ambientColor = ambientColor;
 }
 
-void Color::setDiffuseColor(glm::vec3 ambientColor) {
-	this->diffuseColor = ambientColor;
+void Color::setDiffuseColor(glm::vec3 diffuseColor) {
+	this->diffuseColor = diffuseColor;
 }
 
-void Color::setSpecularColor(glm::vec3 ambientColor) {
-	this->specularColor = ambientColor;
+void Color::setSpecularColor(glm::vec3 specularColor) {
+	this->specularColor = specularColor;
 }
 
 glm::vec3 Color::addColors()
@@ -46,7 +46,17 @@ glm::vec3 Color::addColors()
 	return this->ambientColor + this->diffuseColor + this->specularColor;
 }
 
-const Color operator*(Color color, float value)
+const Color operator*(Color &color, float value)
 {
 	return Color(value * color.getAmbientColor(), value * color.getDiffuseColor(), value * color.getSpecularColor());
+}
+
+const Color operator+(Color &color1, Color &color2)
+{
+	return Color(color1.getAmbientColor() + color2.getAmbientColor(), color1.getDiffuseColor() + color2.getDiffuseColor(), color1.getSpecularColor() + color2.getSpecularColor());
+}
+
+const Color operator*(Color color1, Color color2)
+{
+	return Color(color1.getAmbientColor() * color2.getAmbientColor(), color1.getDiffuseColor() * color2.getDiffuseColor(), color1.getSpecularColor() * color2.getSpecularColor());
 }

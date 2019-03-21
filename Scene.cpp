@@ -47,27 +47,64 @@ bool Scene::shadowTrace(Ray& shadowRay) {
 }
 
 Color Scene::trace(Ray& ray) {
-	Color color;
-	// TODO
 	float nearest_t = INFINITY;
 	int indexClosestObject = -1;
+
 	for (int i = 0; i < this->objects.size(); i++) {
 		float t = INFINITY;
-		if (this->objects[i]->intersect(ray, t)) {
-			if (t < nearest_t) {
-				nearest_t = t;
-				indexClosestObject = i;
-			}
+		if (this->objects[i]->intersect(ray, t) && t < nearest_t) {
+			nearest_t = t;
+			indexClosestObject = i;
 		}
 	}
 
-	bool isInShadow = true;
-	if (indexClosestObject != -1) {
-		// Computer shadow ray
-		isInShadow = false;
+	Color pixelColor = Color();
+
+	// If no intersection return the background color
+	if (nearest_t == INFINITY && indexClosestObject == -1) {
+		return pixelColor;
 	}
-	//
-	return (!isInShadow)?this->objects[indexClosestObject]->getMaterial().getColor() : Color();
+	
+	// The nearest intersection point
+	glm::vec3 intersectionPoint = ray.getOrigin() + ray.getDirection() * nearest_t;
+
+	// The normal at the nearest intersection point
+	glm::vec3 intersectionNormal = glm::normalize(this->objects[indexClosestObject]->calculateNormal(intersectionPoint));
+
+	// Cast shadow rays for each light sources
+	for (int i = 0; i < this->lights.size(); i++) {
+		Ray shadowRay(intersectionPoint, glm::normalize(this->lights[i].getPosition() - intersectionPoint));
+		float t = INFINITY;
+		
+		// Verify if the shadow ray intersects with any objects
+		int j = 0;
+		while (j < this->objects.size() && !this->objects[j]->intersect(shadowRay, t)) {
+			j++;
+		}
+
+		// If t== INFINITY then light source is not blocked and contributes to the color of the pixel
+		if (t == INFINITY) {
+
+			// Diffuse
+			glm::vec3 lightDirection = glm::normalize(this->lights[i].getPosition() - intersectionPoint);
+			float diffuseStrength = glm::max(glm::dot(intersectionNormal, lightDirection), 0.0f);
+			glm::vec3 diffuse = diffuseStrength * this->lights[i].getColor().getDiffuseColor() * this->objects[i]->getMaterial().getColor().getDiffuseColor();
+
+			// Specular
+			glm::vec3 viewDirection = glm::normalize(ray.getOrigin() - intersectionPoint);
+			glm::vec3 reflectedLightDirection = glm::reflect(-lightDirection, intersectionNormal);
+			float specularStrength = glm::pow(glm::max(glm::dot(reflectedLightDirection, viewDirection), 0.0f), this->objects[indexClosestObject]->getMaterial().getShininess());
+			glm::vec3 specular = specularStrength * this->lights[i].getColor().getSpecularColor() * this->objects[i]->getMaterial().getColor().getSpecularColor();
+
+			pixelColor.setDiffuseColor(pixelColor.getDiffuseColor() + diffuse);
+			pixelColor.setSpecularColor(pixelColor.getSpecularColor() + specular);
+		}
+	}
+
+	// Ambient color added once
+	pixelColor.setAmbientColor(this->objects[indexClosestObject]->getMaterial().getColor().getAmbientColor());
+
+	return pixelColor;
 }
 
 bool Scene::parseFile(const char* path) {

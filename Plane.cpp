@@ -17,7 +17,8 @@ bool Plane::intersect(Ray& ray, float& t) {
 		return false;
 	}
 
-	float numerator = -(glm::dot(this->normal, this->getPosition()) + glm::sqrt(glm::dot(ray.getDirection(), ray.getDirection())));
+	float d = -glm::dot(this->normal, this->getPosition());
+	float numerator = -(glm::dot(this->normal, ray.getOrigin()) + d);
 	float tmp = numerator / denominator;
 
 	// If t <= 0, the intersection is behind the ray's origin
@@ -29,6 +30,7 @@ bool Plane::intersect(Ray& ray, float& t) {
 
 	return true;
 }
+
 
 void Plane::parse(std::istream& input)
 {

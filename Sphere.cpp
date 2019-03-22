@@ -30,13 +30,13 @@ bool Sphere::intersect(Ray& ray, float& t, glm::vec3& intersectionPoint, glm::ve
 	
 	t = glm::min(t_0, t_1);
 	intersectionPoint = ray.getOrigin() + ray.getDirection() * t;
-	intersectionNormal = (1 / radius) * (intersectionPoint - this->position);
+	intersectionNormal = (1 / radius) * (intersectionPoint - this->getPosition());
 
 	return true;
 }
 
 glm::vec3 Sphere::calculateNormal(glm::vec3 position) {
-	return (1 / this->radius) * position - this->position;
+	return (1 / this->radius) * position - this->getPosition();
 }
 
 float Sphere::computeA(Ray& ray) {

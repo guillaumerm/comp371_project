@@ -23,13 +23,13 @@ void Scene::render(const char* path) {
 			// Should I substract the center of projection that is the position of the camera
 			glm::vec3 rayDirection = glm::normalize(glm::vec3(x, y, z));
 			Ray ray(this->camera.getPosition(), rayDirection);
-			Color pixelColor = trace(ray);
-			image(i, j, 0) = pixelColor.addColors().r * 255.0f;
-			image(i, j, 1) = pixelColor.addColors().g * 255.0f;
-			image(i, j, 2) = pixelColor.addColors().b * 255.0f;
+			glm::vec3 pixelColor = trace(ray);
+			image(i, j, 0) = pixelColor.r * 255.0f;
+			image(i, j, 1) = pixelColor.g * 255.0f;
+			image(i, j, 2) = pixelColor.b * 255.0f;
 		}
 	}
-	//image.save(path);
+	image.save("./test.bmp");
 	cimg_library::CImgDisplay main_disp(image, "Render");
 	while (!main_disp.is_closed()) {
 		main_disp.wait();
@@ -46,7 +46,7 @@ bool Scene::shadowTrace(Ray& shadowRay) {
 	return false;
 }
 
-Color Scene::trace(Ray& ray) {
+glm::vec3 Scene::trace(Ray& ray) {
 	float nearest_t = INFINITY;
 	glm::vec3 intersectionNormal;
 	glm::vec3 intersectionPoint;
@@ -64,51 +64,53 @@ Color Scene::trace(Ray& ray) {
 		}
 	}
 
-	Color pixelColor = Color();
+	glm::vec3 pixelColor = glm::vec3(0);
 
 	// If no intersection return the background color
 	if (nearest_t == INFINITY && indexClosestObject == -1) {
 		return pixelColor;
 	}
 
-	glm::vec3 diffuseCoefficients;
-	glm::vec3 specularCoefficients;
+	glm::vec3 diffuse;
+	glm::vec3 specular;
+	glm::vec3 normalizedNormal = glm::normalize(intersectionNormal);
 
 	// Cast shadow rays for each light sources
 	for (int i = 0; i < this->lights.size(); i++) {
 		Ray shadowRay(intersectionPoint, glm::normalize(this->lights[i].getPosition() - intersectionPoint));
 		float t = INFINITY;
-		
+		bool isBlocked = false;
+
 		// Verify if the shadow ray intersects with any objects
-		int j = 0;
-		while (j < this->objects.size() && !this->objects[j]->intersect(shadowRay, t)) {
-			j++;
+		for (int j = 0; j < this->objects.size() && !isBlocked; j++) {
+			if (this->objects[j]->intersect(shadowRay, t) && t > 0) {
+				isBlocked = true;
+			}
 		}
 
 		// If t== INFINITY then light source is not blocked and contributes to the color of the pixel
-		if (t == INFINITY) {
-			glm::vec3 normalizedNormal = glm::normalize(intersectionNormal);
+		if (!isBlocked) {
 
 			// Diffuse
 			glm::vec3 lightDirection = glm::normalize(this->lights[i].getPosition() - intersectionPoint);
 			float diffuseStrength = glm::max(glm::dot(normalizedNormal, lightDirection), 0.0f);
-			glm::vec3 diffuse = diffuseStrength * this->lights[i].getColor().getDiffuseColor();
+			pixelColor += diffuseStrength * this->lights[i].getColor().getDiffuseColor() * this->objects[i]->getMaterial().getColor().getDiffuseColor();
 
 			// Specular
-			glm::vec3 viewDirection = glm::normalize(ray.getOrigin() - intersectionPoint);
+			glm::vec3 viewDirection = glm::normalize(this->camera.getPosition() - intersectionPoint);
 			glm::vec3 reflectedLightDirection = glm::reflect(-lightDirection, normalizedNormal);
 			float specularStrength = glm::pow(glm::max(glm::dot(reflectedLightDirection, viewDirection), 0.0f), this->objects[indexClosestObject]->getMaterial().getShininess());
-			glm::vec3 specular = specularStrength * this->lights[i].getColor().getSpecularColor();
-
-			diffuseCoefficients += diffuse;
-			specularCoefficients += specular;
+			pixelColor += specularStrength * this->lights[i].getColor().getSpecularColor() * this->objects[i]->getMaterial().getColor().getSpecularColor();
 		}
 	}
 
 	// Ambient color added once
-	pixelColor.setAmbientColor(this->objects[indexClosestObject]->getMaterial().getColor().getAmbientColor());
-	pixelColor.setDiffuseColor(this->objects[indexClosestObject]->getMaterial().getColor().getDiffuseColor() * diffuseCoefficients);
-	pixelColor.setSpecularColor(this->objects[indexClosestObject]->getMaterial().getColor().getSpecularColor() * specularCoefficients);
+	pixelColor += this->objects[indexClosestObject]->getMaterial().getColor().getAmbientColor();
+
+	// Clamp
+	pixelColor.r = glm::min(1.0f, pixelColor.r);
+	pixelColor.g = glm::min(1.0f, pixelColor.g);
+	pixelColor.b = glm::min(1.0f, pixelColor.b);
 
 	return pixelColor;
 }

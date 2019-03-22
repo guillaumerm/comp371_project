@@ -130,6 +130,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="OBJLoader.h" />
     <ClInclude Include="PhysicalObject.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Ray.h" />

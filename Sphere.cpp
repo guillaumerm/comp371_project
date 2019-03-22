@@ -9,7 +9,7 @@ Sphere::Sphere(glm::vec3 position, float radius, Material material):PhysicalObje
 	this->radius = radius;
 }
 
-bool Sphere::intersect(Ray& ray, float& t) {
+bool Sphere::intersect(Ray& ray, float& t, glm::vec3& intersectionPoint, glm::vec3& intersectionNormal) {
 	float a = this->computeA(ray);
 	float b = this->computeB(ray);
 	float c = this->computeC(ray);
@@ -27,9 +27,10 @@ bool Sphere::intersect(Ray& ray, float& t) {
 	if (t_1<0) {
 		return false;
 	}
-	else {
-		t = glm::min(t_0, t_1);
-	}
+	
+	t = glm::min(t_0, t_1);
+	intersectionPoint = ray.getOrigin() + ray.getDirection() * t;
+	intersectionNormal = (1 / radius) * (intersectionPoint - this->position);
 
 	return true;
 }

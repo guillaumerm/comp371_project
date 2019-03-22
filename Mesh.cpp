@@ -12,7 +12,7 @@ Mesh::Mesh(const char* path, Material material) : PhysicalObject(Mesh::DEFAULT_P
 	}
 }
 
-bool Mesh::intersect(Ray& ray, float& t)
+bool Mesh::intersect(Ray& ray, float& t, glm::vec3 &intersectionPoint, glm::vec3 &intersectionNormal)
 {
 	return false;
 }

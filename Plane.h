@@ -16,7 +16,7 @@ public:
 	Plane(glm::vec3 normal, glm::vec3 position, Material material);
 	glm::vec3 getNormal();
 	void setNormal(glm::vec3 normal);
-	bool intersect(Ray& ray, float& t);
+	bool intersect(Ray& ray, float& t, glm::vec3& intersectionPoint, glm::vec3& intersectionNormal);
 	void parse(std::istream& input);
 	glm::vec3 calculateNormal(glm::vec3 position);
 private:

@@ -10,7 +10,8 @@ public:
 	PhysicalObject(glm::vec3 psotion, Material material);
 	Material getMaterial();
 	void setMaterial(Material material);
-	virtual bool intersect(Ray& ray, float& t) = 0;
+	virtual bool intersect(Ray& ray, float& t);
+	virtual bool intersect(Ray& ray, float& t, glm::vec3 &intersectionPoint, glm::vec3 &intersectionNormal) = 0;
 	virtual glm::vec3 calculateNormal(glm::vec3 position) = 0;
 private:
 	Material material;

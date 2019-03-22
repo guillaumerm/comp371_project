@@ -9,7 +9,7 @@ Plane::Plane(glm::vec3 normal, glm::vec3 position, Material material): PhysicalO
 	this->normal = normal;
 }
 
-bool Plane::intersect(Ray& ray, float& t) {
+bool Plane::intersect(Ray& ray, float& t, glm::vec3 &intersectionPoint, glm::vec3 &intersectionNormal) {
 	float denominator = glm::dot(this->normal, ray.getDirection());
 	
 	// If denominator is 0 there is no intersection as the ray is parallel to the plane
@@ -27,6 +27,8 @@ bool Plane::intersect(Ray& ray, float& t) {
 	}
 
 	t = tmp;
+	intersectionPoint = ray.getOrigin() + ray.getDirection() * t;
+	intersectionNormal = this->normal;
 
 	return true;
 }

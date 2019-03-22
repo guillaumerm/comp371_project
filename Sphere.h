@@ -14,7 +14,7 @@ class Sphere: public PhysicalObject {
 public:
 	Sphere();
 	Sphere(glm::vec3 position, float radius, Material material);
-	bool intersect(Ray &ray, float &t);
+	bool intersect(Ray &ray, float &t, glm::vec3& intersectionPoint, glm::vec3& intersectionNormal);
 	void parse(std::istream& input);
 	float getRadius();
 	void setRadius(float radius);

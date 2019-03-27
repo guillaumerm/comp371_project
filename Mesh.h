@@ -1,5 +1,6 @@
 #ifndef MESH_H
 #define MESH_H
+#define DEBUG
 #include <string>
 #include <sstream>
 #include <vector>
@@ -10,6 +11,7 @@
 #include "OBJLoader.h"
 #include "Material.h"
 #include "Ray.h"
+#include "Plane.h"
 #include "Utils.h"
 
 class Mesh: public PhysicalObject {

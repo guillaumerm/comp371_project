@@ -22,7 +22,7 @@
 class Scene {
 public:
 	Scene(const char *path);
-	void render(const char* path);
+	bool render(const char* path);
 private:
 	std::vector<PhysicalObject*> objects;
 	std::vector<Light> lights;

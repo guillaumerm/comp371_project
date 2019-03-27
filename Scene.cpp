@@ -5,7 +5,7 @@ Scene::Scene(const char* path)
 	this->parseFile(path);
 }
 
-void Scene::render(const char* path) {
+bool Scene::render(const char* path) {
 	const int width = glm::round(this->camera.getWidth());
 	const int height = glm::round(this->camera.getHeight());
 	std::printf("Width:%d Height:%d", width, height);
@@ -16,8 +16,8 @@ void Scene::render(const char* path) {
 
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
-			float x = (2 * ((i + 0.5) / (float)width) - 1) * this->camera.getAspectRatio() * angle;
-			float y = (1 - 2 * ((j + 0.5) / (float)height)) * angle;
+			float x = (2 * (i + 0.5) / (float)width - 1) * this->camera.getAspectRatio() * angle;
+			float y = (1 - 2 * (j + 0.5) / (float)height) * angle;
 			//float z = -this->camera.getFocalLength();
 			float z = -1;
 			// Should I substract the center of projection that is the position of the camera
@@ -29,11 +29,13 @@ void Scene::render(const char* path) {
 			image(i, j, 2) = pixelColor.b * 255.0f;
 		}
 	}
-	image.save("./test.bmp");
+	image.save(path);
 	cimg_library::CImgDisplay main_disp(image, "Render");
 	while (!main_disp.is_closed()) {
 		main_disp.wait();
 	}
+
+	return true;
 }
 
 bool Scene::shadowTrace(Ray& shadowRay) {
@@ -71,8 +73,6 @@ glm::vec3 Scene::trace(Ray& ray) {
 		return pixelColor;
 	}
 
-	glm::vec3 diffuse;
-	glm::vec3 specular;
 	glm::vec3 normalizedNormal = glm::normalize(intersectionNormal);
 
 	// Cast shadow rays for each light sources
@@ -83,9 +83,7 @@ glm::vec3 Scene::trace(Ray& ray) {
 
 		// Verify if the shadow ray intersects with any objects
 		for (int j = 0; j < this->objects.size() && !isBlocked; j++) {
-			if (this->objects[j]->intersect(shadowRay, t) && t > 0) {
-				isBlocked = true;
-			}
+			isBlocked = this->objects[j]->intersect(shadowRay, t);
 		}
 
 		// If t== INFINITY then light source is not blocked and contributes to the color of the pixel
@@ -94,20 +92,22 @@ glm::vec3 Scene::trace(Ray& ray) {
 			// Diffuse
 			glm::vec3 lightDirection = glm::normalize(this->lights[i].getPosition() - intersectionPoint);
 			float diffuseStrength = glm::max(glm::dot(normalizedNormal, lightDirection), 0.0f);
-			pixelColor += diffuseStrength * this->lights[i].getColor().getDiffuseColor() * this->objects[i]->getMaterial().getColor().getDiffuseColor();
+			glm::vec3 diffuse = diffuseStrength * this->objects[indexClosestObject]->getMaterial().getColor().getDiffuseColor();
 
 			// Specular
 			glm::vec3 viewDirection = glm::normalize(this->camera.getPosition() - intersectionPoint);
 			glm::vec3 reflectedLightDirection = glm::reflect(-lightDirection, normalizedNormal);
 			float specularStrength = glm::pow(glm::max(glm::dot(reflectedLightDirection, viewDirection), 0.0f), this->objects[indexClosestObject]->getMaterial().getShininess());
-			pixelColor += specularStrength * this->lights[i].getColor().getSpecularColor() * this->objects[i]->getMaterial().getColor().getSpecularColor();
+			glm::vec3 specular = specularStrength * this->objects[indexClosestObject]->getMaterial().getColor().getDiffuseColor();
+			
+			// Add the light's contribution to the pixel_color
+			pixelColor += this->lights[i].getColor().addColors() * (diffuse + specular);
 		}
 	}
 
 	// Ambient color added once
 	pixelColor += this->objects[indexClosestObject]->getMaterial().getColor().getAmbientColor();
-
-	// Clamp
+	// Clamp color channels between 0.0f and 1.0f
 	pixelColor.r = glm::min(1.0f, pixelColor.r);
 	pixelColor.g = glm::min(1.0f, pixelColor.g);
 	pixelColor.b = glm::min(1.0f, pixelColor.b);

@@ -51,7 +51,7 @@ bool Mesh::intersect(Ray& ray, float& t, glm::vec3 &intersectionPoint, glm::vec3
 	float denom = glm::dot(potentialNormal, potentialNormal);
 
 	glm::vec3 M;
-	glm::vec3& P = intersectionPoint;
+	glm::vec3& P = potentialPoint;
 	glm::vec3& v0 = A;
 	glm::vec3& v1 = B;
 	glm::vec3& v2 = C;

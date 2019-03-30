@@ -13,7 +13,7 @@ int main(int argc, const char* argvs[]) {
 	scene.render(argvs[2]);
 #else
 	// TODO issue with loading mesh scene files
-	Scene scene("./scenes/meshscene1.txt");
+	Scene scene("./scenes/scene2.txt");
 	scene.render("./debug.bmp");
 #endif
 

@@ -13,6 +13,7 @@
 #include "Ray.h"
 #include "Plane.h"
 #include "Utils.h"
+#include "Triangle.h"
 
 class Mesh: public PhysicalObject {
 public:
@@ -26,6 +27,7 @@ protected:
 	std::vector<glm::vec3> normals;
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec2> UVs;
+	std::vector<Triangle> faces;
 	std::vector<int> indices;
 };
 #endif

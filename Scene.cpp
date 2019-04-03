@@ -92,21 +92,22 @@ glm::vec3 Scene::trace(Ray& ray) {
 			// Diffuse
 			glm::vec3 lightDirection = glm::normalize(this->lights[i].getPosition() - intersectionPoint);
 			float diffuseStrength = glm::max(glm::dot(normalizedNormal, lightDirection), 0.0f);
-			glm::vec3 diffuse = diffuseStrength * this->objects[indexClosestObject]->getMaterial().getColor().getDiffuseColor();
+			glm::vec3 diffuse = this->lights[i].getColor().getDiffuseColor() * diffuseStrength * this->objects[indexClosestObject]->getMaterial().getColor().getDiffuseColor();
 
 			// Specular
 			glm::vec3 viewDirection = glm::normalize(this->camera.getPosition() - intersectionPoint);
 			glm::vec3 reflectedLightDirection = glm::reflect(-lightDirection, normalizedNormal);
 			float specularStrength = glm::pow(glm::max(glm::dot(reflectedLightDirection, viewDirection), 0.0f), this->objects[indexClosestObject]->getMaterial().getShininess());
-			glm::vec3 specular = specularStrength * this->objects[indexClosestObject]->getMaterial().getColor().getDiffuseColor();
+			glm::vec3 specular = this->lights[i].getColor().getSpecularColor() * specularStrength * this->objects[indexClosestObject]->getMaterial().getColor().getSpecularColor();
 			
 			// Add the light's contribution to the pixel_color
-			pixelColor += this->lights[i].getColor().addColors() * (diffuse + specular);
+			pixelColor += (diffuse + specular);
 		}
 	}
 
 	// Ambient color added once
 	pixelColor += this->objects[indexClosestObject]->getMaterial().getColor().getAmbientColor();
+
 	// Clamp color channels between 0.0f and 1.0f
 	pixelColor.r = glm::min(1.0f, pixelColor.r);
 	pixelColor.g = glm::min(1.0f, pixelColor.g);

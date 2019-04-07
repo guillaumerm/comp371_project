@@ -52,13 +52,9 @@ void Mesh::parse(std::istream& input)
 	// Read object file
 	std::getline(input, line);
 
-#ifndef DEBUG
-	std::string stringPath = trim(line.substr(line.find(colon) + 1, line.length()));
-#else
-	std::string stringPath = "./scenes/" + trim(line.substr(line.find(colon) + 1, line.length()));
-#endif
+	std::string stringOBJPath = trim(line.substr(line.find(colon) + 1, line.length()));
 
-	loadOBJ(stringPath.c_str(), this->indices, this->vertices, this->normals, this->UVs);
+	loadOBJ(stringOBJPath.c_str(), this->indices, this->vertices, this->normals, this->UVs);
 
 	// Construct triangle from the indices read from the OBJ file
 	int numberOfTriangles = this->indices.size() / 3;

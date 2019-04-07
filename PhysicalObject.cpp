@@ -12,8 +12,9 @@ void PhysicalObject::setMaterial(Material material) {
 	this->material = material;
 }
 
-bool PhysicalObject::intersect(Ray& ray, float& t)
+bool PhysicalObject::intersect(Ray& ray)
 {
+	float t = INFINITY;
 	glm::vec3 intersectionPoint;
 	glm::vec3 intersectionNormal;
 	return this->intersect(ray, t, intersectionPoint, intersectionNormal);

@@ -12,13 +12,26 @@
 
 class Sphere: public PhysicalObject {
 public:
+	//! A constructor which creates an empty Sphere object.
 	Sphere();
+
+	//! A constructor which creates a Sphere object with the specified position, radius and meterial
+	/*!
+		\param position position of the object relative to world origin
+		\param radius length of raidus
+	*/
 	Sphere(glm::vec3 position, float radius, Material material);
+
+	//! Verifies if Sphere intersects with a given Ray.
+	/*!
+		\param ray Ray which is checked.
+		\param intersectionPoint point at which the ray intersects.
+		\param intersectionNormal normal at the intersection point.
+	*/
 	bool intersect(Ray &ray, float &t, glm::vec3& intersectionPoint, glm::vec3& intersectionNormal);
 	void parse(std::istream& input);
 	float getRadius();
 	void setRadius(float radius);
-	glm::vec3 calculateNormal(glm::vec3 position);
 private:
 	float radius;
 	float computeB(Ray& ray);

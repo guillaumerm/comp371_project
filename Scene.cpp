@@ -8,44 +8,48 @@ Scene::Scene(const char* path)
 bool Scene::render(const char* path) {
 	const int width = glm::round(this->camera.getWidth());
 	const int height = glm::round(this->camera.getHeight());
-	std::printf("Width:%d Height:%d", width, height);
-	float angle = glm::tan(glm::radians(this->camera.getFov() / 2));
+	const float angle = glm::tan(glm::radians(this->camera.getFov() / 2));
 
 	cimg_library::CImg<float> image(width, height, 1, 3, 0);
 
-
+	// Shoots the rays for tracing the scene
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
+
+			// Calculate the xyz components of the ray direction
 			float x = (2 * (i + 0.5) / (float)width - 1) * this->camera.getAspectRatio() * angle;
 			float y = (1 - 2 * (j + 0.5) / (float)height) * angle;
-			//float z = -this->camera.getFocalLength();
 			float z = -1;
-			// Should I substract the center of projection that is the position of the camera
+
+			// Create ray and trace it
 			glm::vec3 rayDirection = glm::normalize(glm::vec3(x, y, z));
+			if (j == 0 && i == width - 1) {
+				int breakpoint = 1 + 1;
+			}
 			Ray ray(this->camera.getPosition(), rayDirection);
 			glm::vec3 pixelColor = trace(ray);
+
+			// Apply the color from the ray trace to the image pixel
 			image(i, j, 0) = pixelColor.r * 255.0f;
 			image(i, j, 1) = pixelColor.g * 255.0f;
 			image(i, j, 2) = pixelColor.b * 255.0f;
 		}
 	}
 	image.save(path);
-	cimg_library::CImgDisplay main_disp(image, "Render");
-	while (!main_disp.is_closed()) {
-		main_disp.wait();
-	}
 
 	return true;
 }
 
 bool Scene::shadowTrace(Ray& shadowRay) {
 	float t = INFINITY;
-	for (int i = 0; i < this->objects.size(); i++) {
-		if (this->objects[i]->intersect(shadowRay, t)) {
-			return true;
-		}
+	bool isBlocked = false;
+
+	// Verify if the shadow ray intersects with any objects
+	for (int j = 0; j < this->objects.size() && !isBlocked; j++) {
+		isBlocked = this->objects[j]->intersect(shadowRay);
 	}
-	return false;
+
+	return isBlocked;
 }
 
 glm::vec3 Scene::trace(Ray& ray) {
@@ -54,6 +58,7 @@ glm::vec3 Scene::trace(Ray& ray) {
 	glm::vec3 intersectionPoint;
 	int indexClosestObject = -1;
 
+	// Find the closest intersection if any
 	for (int i = 0; i < this->objects.size(); i++) {
 		float t = INFINITY;
 		glm::vec3 point;
@@ -78,16 +83,9 @@ glm::vec3 Scene::trace(Ray& ray) {
 	// Cast shadow rays for each light sources
 	for (int i = 0; i < this->lights.size(); i++) {
 		Ray shadowRay(intersectionPoint, glm::normalize(this->lights[i].getPosition() - intersectionPoint));
-		float t = INFINITY;
-		bool isBlocked = false;
 
-		// Verify if the shadow ray intersects with any objects
-		for (int j = 0; j < this->objects.size() && !isBlocked; j++) {
-			isBlocked = this->objects[j]->intersect(shadowRay, t);
-		}
-
-		// If t== INFINITY then light source is not blocked and contributes to the color of the pixel
-		if (!isBlocked) {
+		// If shadow ray do not intersect with object apply phong illumination for light
+		if (!shadowTrace(shadowRay)) {
 
 			// Diffuse
 			glm::vec3 lightDirection = glm::normalize(this->lights[i].getPosition() - intersectionPoint);

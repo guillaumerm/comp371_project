@@ -80,11 +80,6 @@ void Plane::parse(std::istream& input)
 	this->setMaterial(material);
 }
 
-glm::vec3 Plane::calculateNormal(glm::vec3 position)
-{
-	return this->normal;
-}
-
 glm::vec3 Plane::getNormal() {
 	return this->normal;
 }

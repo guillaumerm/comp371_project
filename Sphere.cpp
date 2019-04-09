@@ -10,7 +10,7 @@ Sphere::Sphere(glm::vec3 position, float radius, Material material):PhysicalObje
 }
 
 bool Sphere::intersect(Ray& ray, float& t, glm::vec3& intersectionPoint, glm::vec3& intersectionNormal) {
-	float epsilon = 1e-5;
+	float epsilon = 0.05f;
 
 	float a = 1.0f;
 	float b = this->computeB(ray);
@@ -25,25 +25,31 @@ bool Sphere::intersect(Ray& ray, float& t, glm::vec3& intersectionPoint, glm::ve
 
 	float t_0 = (-b - glm::sqrt(discriminant)) / (2 * a);
 	float t_1 = (-b + glm::sqrt(discriminant)) / (2 * a);
+
+	float potential_t = INFINITY;
 	
-	// This condition is causing issues with the lighting in mesh_scene2.txt
-	// Removing it makes it Back face culling?
-	//if (t_0 < epsilon && t_1 > epsilon) {
-	//	t = t_1;
-	//	intersectionPoint = ray.getOrigin() + ray.getDirection() * t;
-	//	intersectionNormal = (1 / radius) * (intersectionPoint - this->getPosition());
-	//	return true;
-	//}
-	
-	if (t_0 > epsilon && t_1 > epsilon) {
-		t = glm::min(t_0, t_1);
-		intersectionPoint = ray.getOrigin() + ray.getDirection() * t;
-		intersectionNormal = (1 / radius) * (intersectionPoint - this->getPosition());
-		return true;
-	}
-	else {
+	if (t_0 < epsilon && t_1 > epsilon) {
+		potential_t = t_1;
+	} else if (t_0 > epsilon && t_1 > epsilon) {
+		// Intersection located in front of the Camera
+		potential_t = glm::min(t_0, t_1);
+	} else {
+		// Intersection located behind the Camera
 		return false;
 	}
+
+	glm::vec3 potential_point = ray.getOrigin() + ray.getDirection() * potential_t;
+	glm::vec3 potential_normal = (1 / radius) * (potential_point - this->getPosition());
+
+	// Back face culling
+	if (glm::dot(ray.getDirection(), potential_normal) > 0) {
+		return false;
+	}
+
+	t = potential_t;
+	intersectionPoint = potential_point;
+	intersectionNormal = potential_normal;
+	return true;
 }
 
 float Sphere::computeA(Ray& ray) {

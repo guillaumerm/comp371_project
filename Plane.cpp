@@ -10,6 +10,11 @@ Plane::Plane(glm::vec3 normal, glm::vec3 position, Material material): PhysicalO
 }
 
 bool Plane::intersect(Ray& ray, float& t, glm::vec3 &intersectionPoint, glm::vec3 &intersectionNormal) {
+	// Back face culling
+	if (glm::dot(ray.getDirection(), this->normal) > 0) {
+		return false;
+	}
+
 	float epsilon = 1e-5;
 	float denominator = glm::dot(this->normal, ray.getDirection());
 	

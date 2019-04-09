@@ -12,6 +12,11 @@ bool Triangle::intersect(Ray& ray, float& t, glm::vec3 &intersectionPoint, glm::
 	glm::vec3 potential_point;
 	glm::vec3 potential_normal;
 
+	// Back face culling
+	if (glm::dot(ray.getDirection(), this->normal) > 0) {
+		return false;
+	}
+
 	// Step 1 - Intersects with the plane containing the triangel
 	Plane plane(this->normal, this->v0, Material());
 

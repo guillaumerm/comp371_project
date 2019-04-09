@@ -18,7 +18,6 @@ bool Mesh::intersect(Ray& ray, float& t, glm::vec3 &intersectionPoint, glm::vec3
 	glm::vec3 potentialPoint;
 	glm::vec3 potentialNormal;
 
-
 	for (int i = 0; i < this->faces.size(); i++) {
 
 		float current_t = INFINITY;

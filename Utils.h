@@ -6,6 +6,11 @@
 #include "./glm/gtc/matrix_transform.hpp"
 #include "./glm/gtc/type_ptr.hpp"
 
+//! Parse a input stream into a glm::vec3.
+/*!
+	\param input The stream containing the data.
+	\return The glm::vec3 vector.
+*/
 inline glm::vec3 readVec3(std::istringstream input) {
 	glm::vec3 vector;
 	char delimiter;
@@ -16,6 +21,12 @@ inline glm::vec3 readVec3(std::istringstream input) {
 	return vector;
 }
 
+
+//! Removes extra white space characters at the start and end of the string.
+/*!
+	\param str string to be trimmed.
+	\return Return trimmed string.
+*/
 inline std::string trim(std::string str)
 {
 	// remove trailing white space

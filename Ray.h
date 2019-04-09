@@ -6,14 +6,26 @@
 
 class Ray {
 public:
+	//! A constructor which creates a Ray with a specified origin and direction.
+	/*!
+		\param origin origin of the ray.
+		\param direction tracing direction of the ray.
+	*/
 	Ray(glm::vec3 origin, glm::vec3 direction);
+
+	//! Obtain the direction of the Ray.
+	/*!
+		\return The direction of the Ray.
+	*/
 	glm::vec3 getDirection();
+
+	//! Obtain the origin of the Ray.
+	/*!
+		\param The origin of the Ray.
+	*/
 	glm::vec3 getOrigin();
-	float x(float t);
-	float y(float t);
-	float z(float t);
 private:
-	glm::vec3 origin;
-	glm::vec3 direction;
+	glm::vec3 origin;		/*!< Origin of the Ray. */
+	glm::vec3 direction;	/*!< Direction of the Ray. */
 };
 #endif

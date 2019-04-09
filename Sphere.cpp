@@ -10,7 +10,7 @@ Sphere::Sphere(glm::vec3 position, float radius, Material material):PhysicalObje
 }
 
 bool Sphere::intersect(Ray& ray, float& t, glm::vec3& intersectionPoint, glm::vec3& intersectionNormal) {
-	float epsilon = 0.005f;
+	float epsilon = 1e-5;
 
 	float a = 1.0f;
 	float b = this->computeB(ray);
@@ -27,14 +27,15 @@ bool Sphere::intersect(Ray& ray, float& t, glm::vec3& intersectionPoint, glm::ve
 	float t_1 = (-b + glm::sqrt(discriminant)) / (2 * a);
 	
 	// This condition is causing issues with the lighting in mesh_scene2.txt
-	// Back face culling?
-	if (t_0 < epsilon && t_1 > epsilon) {
-		t = t_1;
-		intersectionPoint = ray.getOrigin() + ray.getDirection() * t;
-		intersectionNormal = (1 / radius) * (intersectionPoint - this->getPosition());
-		return true;
-	}
-	else if (t_0 > epsilon && t_1 > epsilon) {
+	// Removing it makes it Back face culling?
+	//if (t_0 < epsilon && t_1 > epsilon) {
+	//	t = t_1;
+	//	intersectionPoint = ray.getOrigin() + ray.getDirection() * t;
+	//	intersectionNormal = (1 / radius) * (intersectionPoint - this->getPosition());
+	//	return true;
+	//}
+	
+	if (t_0 > epsilon && t_1 > epsilon) {
 		t = glm::min(t_0, t_1);
 		intersectionPoint = ray.getOrigin() + ray.getDirection() * t;
 		intersectionNormal = (1 / radius) * (intersectionPoint - this->getPosition());

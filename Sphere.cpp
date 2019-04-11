@@ -10,13 +10,13 @@ Sphere::Sphere(glm::vec3 position, float radius, Material material):PhysicalObje
 }
 
 bool Sphere::intersect(Ray& ray, float& t, glm::vec3& intersectionPoint, glm::vec3& intersectionNormal) {
-	float epsilon = 0.05f;
+	float epsilon = 0.025f;
 
 	float a = 1.0f;
 	float b = this->computeB(ray);
 	float c = this->computeC(ray);
 
-	float discriminant = glm::pow(b, 2) - (4.0f * a * c);
+	float discriminant = glm::pow(b, 2) - (4 * a * c);
 
 	// Abort if b^2 - 4ac is negative
 	if (discriminant < 0) {
@@ -29,6 +29,7 @@ bool Sphere::intersect(Ray& ray, float& t, glm::vec3& intersectionPoint, glm::ve
 	float potential_t = INFINITY;
 	
 	if (t_0 < epsilon && t_1 > epsilon) {
+		// Intersection located inside the sphere
 		potential_t = t_1;
 	} else if (t_0 > epsilon && t_1 > epsilon) {
 		// Intersection located in front of the Camera
